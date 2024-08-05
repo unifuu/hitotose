@@ -1,0 +1,66 @@
+package game
+
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+// Types
+type Status string
+type Genre string
+type Platform string
+
+const (
+	// Status
+	PLAYING = Status("Playing")
+	PLAYED  = Status("Played")
+	TO_PLAY = Status("ToPlay")
+
+	// Platfoems
+	PC              = Platform("PC")
+	NINTENDO_SWITCH = Platform("Nintendo Switch")
+	PLAY_STATION    = Platform("PlayStation")
+	XBOX            = Platform("Xbox")
+	MOBILE          = Platform("Mobile")
+)
+
+// Return status
+func Statuses() []Status {
+	return []Status{
+		PLAYING, PLAYED, TO_PLAY,
+	}
+}
+
+// Badges
+type Badge struct {
+	// Play status
+	Played  int `json:"played"`
+	Playing int `json:"playing"`
+	ToPlay  int `json:"to_play"`
+
+	// Platform
+	AllPlatform  int `json:"all_platform"`
+	PC           int `json:"pc"`
+	PlayStaion   int `json:"playstation"`
+	NintenSwitch int `json:"nintendo_switch"`
+	XBox         int `json:"xbox"`
+	Mobile       int `json:"mobile"`
+}
+
+// Game model
+type Game struct {
+	ID         primitive.ObjectID `json:"id" bson:"_id"`
+	Title      string             `json:"title" bson:"title"`
+	Genre      string             `json:"genre" bson:"genre"`
+	Platform   string             `json:"platform" bson:"platform"`
+	Developer  string             `json:"developer" bson:"developer"`
+	Publisher  string             `json:"publisher" bson:"publisher"`
+	Status     Status             `json:"status" bson:"status"`
+	PlayedTime int                `json:"played_time" bson:"played_time"`
+	TimeToBeat int                `json:"time_to_beat" bson:"time_to_beat"`
+	Ranking    int                `json:"ranking" bson:"ranking"`
+	Rating     string             `json:"rating" bson:"rating"`
+	CreatedAt  time.Time          `json:"-" bson:"created_at"`
+	UpdatedAt  time.Time          `json:"-" bson:"updated_at"`
+}
