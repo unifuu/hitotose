@@ -1,23 +1,20 @@
 package api
 
 import (
-	mw "ditto/middleware"
-	"ditto/model/game"
-	"ditto/util/format"
-	"ditto/util/path"
 	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 
+	"github.com/unifuu/hitotose/gin/model/game"
 	"github.com/unifuu/hitotose/gin/srv"
-	mgo "github.com/unifuu/monggo"
+	"github.com/unifuu/hitotose/gin/util"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	GameService srv.Service
+	service srv.Service
 )
 
 const (
@@ -25,23 +22,19 @@ const (
 )
 
 func Init(e *gin.Engine) {
-	GameService = srv.NewService()
+	service = srv.NewService()
 
-	anon := e.Group("/api/blog")
+	api := e.Group("/api/game")
 	{
-		anon.GET("/", index)
-	}
-
-	auth := e.Group("/api/game").Use(mw.Auth)
-	{
-		auth.Any("/create", create)
-		auth.Any("/delete", delete)
-		auth.Any("/update", update)
-		auth.POST("/update_status", updateStatus)
-		auth.GET("/status", query)
-		auth.GET("/badges", badges)
-		auth.GET("/rank/target", target)
-		auth.GET("/status/:status/:platform/:page", status)
+		api.GET("/", index)
+		api.Any("/create", create)
+		api.Any("/delete", delete)
+		api.Any("/update", update)
+		api.POST("/update_status", updateStatus)
+		api.GET("/status", query)
+		api.GET("/badges", badges)
+		api.GET("/rank/target", target)
+		api.GET("/status/:status/:platform/:page", status)
 	}
 }
 
@@ -52,14 +45,14 @@ func target(c *gin.Context) {
 func updateStatus(c *gin.Context) {
 	gameId := c.PostForm("id")
 	newStatus := c.PostForm("newStatus")
-	targetGame := h.GameService.ByID(gameId)
+	targetGame := service.ByID(gameId)
 	targetGame.Status = game.Status(newStatus)
-	h.GameService.Update(targetGame)
+	service.Update(targetGame)
 }
 
 func badges(c *gin.Context) {
 	status := game.Status(c.Query("status"))
-	badges := h.GameService.Badge(status)
+	badges := service.Badge(status)
 	c.JSON(http.StatusOK, gin.H{
 		"badges": badges,
 	})
@@ -67,28 +60,20 @@ func badges(c *gin.Context) {
 
 func create(c *gin.Context) {
 	switch c.Request.Method {
-	case "GET":
-		c.JSON(http.StatusOK, gin.H{
-			"developers": h.IncService.Developers(),
-			"publishers": h.IncService.Publishers(),
-			"genres":     game.Genres(),
-			"platforms":  game.Platforms(),
-		})
-
 	case "POST":
 		title := c.PostForm("title")
-		developerId := c.PostForm("developer_id")
-		publisherId := c.PostForm("publisher_id")
-		genre := game.Genre(c.PostForm("genre"))
-		platform := game.Platform(c.PostForm("platform"))
+		developer := c.PostForm("developer")
+		publisher := c.PostForm("publisher")
+		genre := c.PostForm("genre")
+		platform := c.PostForm("platform")
 
-		h.GameService.Create(game.Game{
-			Title:       title,
-			Status:      game.PLAYING,
-			Genre:       genre,
-			Platform:    platform,
-			DeveloperID: format.ToObjID(developerId),
-			PublisherID: format.ToObjID(publisherId),
+		service.Create(game.Game{
+			Title:     title,
+			Status:    game.PLAYING,
+			Genre:     genre,
+			Platform:  platform,
+			Developer: developer,
+			Publisher: publisher,
 		})
 		c.Redirect(http.StatusSeeOther, "/game")
 	}
@@ -97,22 +82,8 @@ func create(c *gin.Context) {
 func delete(c *gin.Context) {
 	id := c.Query("id")
 
-	// Delete from db.act
-	acts, err := h.ActService.ByTargetID(id)
-	if err != nil {
-		fmt.Println(err)
-		c.JSON(http.StatusNotFound, err)
-		return
-	}
-
-	if len(acts) != 0 {
-		for _, v := range acts {
-			mgo.DeleteID(mgo.Acts, v.ID)
-		}
-	}
-
 	// Delete from db.game
-	err = h.GameService.Delete(id)
+	err := service.Delete(id)
 	if err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusNotFound, err)
@@ -121,7 +92,7 @@ func delete(c *gin.Context) {
 
 	// Delete from assets
 	file := id + ".webp"
-	root := path.Root()
+	root := util.Root()
 	path := root + "/../assets/img/games/" + file
 	os.Remove(path)
 }
@@ -129,7 +100,7 @@ func delete(c *gin.Context) {
 func index(c *gin.Context) {
 	status := game.PLAYING
 	data := gin.H{
-		"games": h.GameService.ByStatus(status),
+		"games": service.ByStatus(status),
 	}
 	c.JSON(http.StatusOK, data)
 }
@@ -137,7 +108,7 @@ func index(c *gin.Context) {
 func query(c *gin.Context) {
 	status := game.Status(c.Query("status"))
 	data := gin.H{
-		"games": h.GameService.ByStatus(status),
+		"games": service.ByStatus(status),
 	}
 	c.JSON(http.StatusOK, data)
 }
@@ -146,25 +117,16 @@ func update(c *gin.Context) {
 	switch c.Request.Method {
 	case "GET":
 		id := c.Query("id")
-		g := h.GameService.ByID(id)
+		g := service.ByID(id)
 
 		c.JSON(http.StatusOK, gin.H{
-			"game":        g,
-			"developers":  h.IncService.Developers(),
-			"publishers":  h.IncService.Publishers(),
-			"statuses":    game.Statuses(),
-			"platforms":   game.Platforms(),
-			"genres":      game.Genres(),
-			"played_hour": g.TotalTime / 60,
-			"played_min":  g.TotalTime % 60,
-			"hltb_hour":   g.HowLongToBeat / 60,
-			"hltb_min":    g.HowLongToBeat % 60,
+			"game": g,
 		})
 
 	case "POST":
 		gId := c.PostForm("id")
-		dId := c.PostForm("developer_id")
-		pId := c.PostForm("publisher_id")
+		developer := c.PostForm("developer")
+		publisher := c.PostForm("publisher")
 
 		playedHour, _ := strconv.Atoi(c.PostForm("played_hour"))
 		playedMin, _ := strconv.Atoi(c.PostForm("played_min"))
@@ -177,15 +139,15 @@ func update(c *gin.Context) {
 		ranking, _ := strconv.Atoi(c.PostForm("ranking"))
 		// rating, _ := strconv.Atoi(c.PostForm("rating"))
 
-		g := h.GameService.ByID(gId)
+		g := service.ByID(gId)
 		g.Title = c.PostForm("title")
-		g.DeveloperID = format.ToObjID(dId)
-		g.PublisherID = format.ToObjID(pId)
+		g.Developer = developer
+		g.Publisher = publisher
 		g.Status = game.Status(c.PostForm("status"))
-		g.TotalTime = playedTime
-		g.HowLongToBeat = hltbTime
-		g.Genre = game.Genre(c.PostForm("genre"))
-		g.Platform = game.Platform(c.PostForm("platform"))
+		g.PlayedTime = playedTime
+		g.TimeToBeat = hltbTime
+		g.Genre = c.PostForm("genre")
+		g.Platform = c.PostForm("platform")
 		g.Ranking = ranking
 		g.Rating = c.PostForm("rating")
 
@@ -193,11 +155,11 @@ func update(c *gin.Context) {
 		// Upload image to assets
 		if file != nil && err == nil {
 			fn := gId + ".webp"
-			root := path.Root()
+			root := util.Root()
 			path := root + "/assets/images/games/" + fn
 			c.SaveUploadedFile(file, path)
 		}
-		h.GameService.Update(g)
+		service.Update(g)
 		c.Redirect(http.StatusSeeOther, "/game")
 	}
 }
@@ -210,7 +172,7 @@ func status(c *gin.Context) {
 		page = 1
 	}
 
-	games, totalPage := h.GameService.PageByPlatformStatus(status, platform, page, PAGE_LIMIT)
+	games, totalPage := service.PageByPlatformStatus(status, platform, page, PAGE_LIMIT)
 	data := gin.H{
 		"games":      games,
 		"total_page": totalPage,

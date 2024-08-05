@@ -2,9 +2,9 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/unifuu/hitotose/gin/api/game"
+	"github.com/unifuu/hitotose/gin/api"
 )
 
 func Route(e *gin.Engine) {
-	game.Init(e)
+	api.Init(e)
 }
