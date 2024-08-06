@@ -298,11 +298,11 @@ export default function Game() {
     const [updateGame, setUpdateGame] = useState<GameData>()
 
     function fetchUpdateGame(id: String) {
-        fetch(`/api/game/update/${id}`, { method: "GET" })
+        fetch(`/api/game/update?id=${id}`, { method: "GET" })
             .then(resp => resp.json())
             .then(data => {
                 if (data != null) {
-                    setUpdateGame(data)
+                    setUpdateGame(data["game"])
                     setOpenUpdateGameDialog(true)
                 }
             });
@@ -312,16 +312,16 @@ export default function Game() {
         fetch(`/api/game/stopwatch`, { method: "GET" })
             .then(resp => resp.json())
             .then(data => {
-                if (data != null) {
-                    setStopwatch(data)
-                }
+                console.log(data["stopwatch"])
+                setStopwatch(data["stopwatch"])
+                console.log(stopwatch)
             })
     }
 
     function refresh() {
         fetchStopwatch()
 
-        fetch(`/api/game/status/${tabStatus}/platform/${tabPlatform}/p/${page}`)
+        fetch(`/api/game/pages?status=${tabStatus}&platform=${tabPlatform}&p=${page}`)
             .then(resp => resp.json())
             .then(data => {
                 if (data["games"] != null) {
@@ -332,24 +332,24 @@ export default function Game() {
                 setTotalPages(data["pages"]);
             })
 
-        fetch(`/api/game/badge/status/${tabStatus}`)
+        fetch(`/api/game/badge?status=${tabStatus}`)
             .then(resp => resp.json())
             .then(data => {
-                setPlayedCnt(data["played"]);
-                setPlayingCnt(data["playing"]);
-                setToPlayCnt(data["to_play"]);
+                setPlayedCnt(data["badges"]["played"]);
+                setPlayingCnt(data["badges"]["playing"]);
+                setToPlayCnt(data["badges"]["to_play"]);
 
-                setAllCount(data["all_platform"]);
-                setPcCount(data["pc"]);
-                setPsCount(data["playstation"]);
-                setNsCount(data["nintendo_switch"]);
-                setXboxCount(data["xbox"]);
-                setMobileCount(data["mobile"]);
+                setAllCount(data["badges"]["all_platform"]);
+                setPcCount(data["badges"]["pc"]);
+                setPsCount(data["badges"]["playstation"]);
+                setNsCount(data["badges"]["nintendo_switch"]);
+                setXboxCount(data["badges"]["xbox"]);
+                setMobileCount(data["badges"]["mobile"]);
             })
     }
 
     const handleDeleteGame = (id: string | undefined) => {
-        fetch(`/api/game/delete/${id}`, {
+        fetch(`/api/game/delete?id=${id}`, {
             method: "DELETE",
         })
             .then(() => {
@@ -380,7 +380,7 @@ export default function Game() {
     };
 
     const handleStartGaming = (id: string) => {
-        fetch(`/api/game/start/${id}/`, { method: "GET" })
+        fetch(`/api/game/start?id=${id}`, { method: "GET" })
             .then(resp => {
                 console.log(resp)
                 if (!resp.ok) {

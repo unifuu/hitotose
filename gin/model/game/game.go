@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -34,7 +35,7 @@ func Statuses() []Status {
 
 // Badges
 type Badge struct {
-	// Play status
+	// Status
 	Played  int `json:"played"`
 	Playing int `json:"playing"`
 	ToPlay  int `json:"to_play"`
@@ -63,4 +64,37 @@ type Game struct {
 	Rating     string             `json:"rating" bson:"rating"`
 	CreatedAt  time.Time          `json:"-" bson:"created_at"`
 	UpdatedAt  time.Time          `json:"-" bson:"updated_at"`
+}
+
+type StopWatch struct {
+	StartTime time.Time `json:"start_time"`
+	EndTime   time.Time `json:"end_time"`
+	Duration  int       `json:"duration"`
+	GameID    string    `json:"game_id"`
+	GameTitle string    `json:"game_title"`
+}
+
+func NewStopWatch(id, title string) *StopWatch {
+	return &StopWatch{
+		StartTime: time.Time{},
+		EndTime:   time.Time{},
+		Duration:  0,
+		GameID:    id,
+		GameTitle: title,
+	}
+}
+
+func (sw *StopWatch) Start() error {
+	if len(sw.GameID) == 0 {
+		return fmt.Errorf("game id cannot be empty")
+	}
+	sw.StartTime = time.Now()
+	return nil
+}
+
+// Stop ends the stopwatch and returns the duration
+func (sw *StopWatch) Stop() int {
+	sw.EndTime = time.Now()
+	sw.Duration = int(sw.EndTime.Sub(sw.StartTime).Minutes())
+	return sw.Duration
 }

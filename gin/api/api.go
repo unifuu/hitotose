@@ -15,6 +15,7 @@ import (
 
 var (
 	service srv.Service
+	sw      *game.StopWatch
 )
 
 const (
@@ -27,28 +28,26 @@ func Init(e *gin.Engine) {
 	api := e.Group("/api/game")
 	{
 		api.GET("/", index)
-		api.Any("/create", create)
+		api.GET("/badge", badges)
+		api.POST("/create", create)
 		api.Any("/delete", delete)
-		api.Any("/update", update)
-		api.POST("/update_status", updateStatus)
+		api.GET("/pages", pages)
+		api.GET("/start", start)
+		api.GET("/stop", stop)
+		api.GET("/stopwatch", stopwatch)
 		api.GET("/status", query)
-		api.GET("/badges", badges)
-		api.GET("/rank/target", target)
-		api.GET("/status/:status/:platform/:page", status)
+		api.GET("/terminate", terminate)
+		api.Any("/update", update)
 	}
 }
 
-func target(c *gin.Context) {
-
-}
-
-func updateStatus(c *gin.Context) {
-	gameId := c.PostForm("id")
-	newStatus := c.PostForm("newStatus")
-	targetGame := service.ByID(gameId)
-	targetGame.Status = game.Status(newStatus)
-	service.Update(targetGame)
-}
+// func updateStatus(c *gin.Context) {
+// 	gameId := c.PostForm("id")
+// 	newStatus := c.PostForm("newStatus")
+// 	targetGame := service.ByID(gameId)
+// 	targetGame.Status = game.Status(newStatus)
+// 	service.Update(targetGame)
+// }
 
 func badges(c *gin.Context) {
 	status := game.Status(c.Query("status"))
@@ -59,24 +58,21 @@ func badges(c *gin.Context) {
 }
 
 func create(c *gin.Context) {
-	switch c.Request.Method {
-	case "POST":
-		title := c.PostForm("title")
-		developer := c.PostForm("developer")
-		publisher := c.PostForm("publisher")
-		genre := c.PostForm("genre")
-		platform := c.PostForm("platform")
+	title := c.PostForm("title")
+	developer := c.PostForm("developer")
+	publisher := c.PostForm("publisher")
+	genre := c.PostForm("genre")
+	platform := c.PostForm("platform")
 
-		service.Create(game.Game{
-			Title:     title,
-			Status:    game.PLAYING,
-			Genre:     genre,
-			Platform:  platform,
-			Developer: developer,
-			Publisher: publisher,
-		})
-		c.Redirect(http.StatusSeeOther, "/game")
-	}
+	service.Create(game.Game{
+		Title:     title,
+		Status:    game.PLAYING,
+		Genre:     genre,
+		Platform:  platform,
+		Developer: developer,
+		Publisher: publisher,
+	})
+	c.Redirect(http.StatusSeeOther, "/game")
 }
 
 func delete(c *gin.Context) {
@@ -122,19 +118,18 @@ func update(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"game": g,
 		})
-
 	case "POST":
 		gId := c.PostForm("id")
 		developer := c.PostForm("developer")
 		publisher := c.PostForm("publisher")
 
-		playedHour, _ := strconv.Atoi(c.PostForm("played_hour"))
-		playedMin, _ := strconv.Atoi(c.PostForm("played_min"))
+		playedHour, _ := strconv.Atoi(c.PostForm("played_time_hour"))
+		playedMin, _ := strconv.Atoi(c.PostForm("played_time_min"))
 		playedTime := playedHour*60 + playedMin
 
-		hltbHour, _ := strconv.Atoi(c.PostForm("hltb_hour"))
-		hltbMin, _ := strconv.Atoi(c.PostForm("hltb_min"))
-		hltbTime := hltbHour*60 + hltbMin
+		toBeatHour, _ := strconv.Atoi(c.PostForm("time_to_beat_hour"))
+		toBeatMin, _ := strconv.Atoi(c.PostForm("time_to_beat_min"))
+		toBeatTime := toBeatHour*60 + toBeatMin
 
 		ranking, _ := strconv.Atoi(c.PostForm("ranking"))
 		// rating, _ := strconv.Atoi(c.PostForm("rating"))
@@ -145,7 +140,7 @@ func update(c *gin.Context) {
 		g.Publisher = publisher
 		g.Status = game.Status(c.PostForm("status"))
 		g.PlayedTime = playedTime
-		g.TimeToBeat = hltbTime
+		g.TimeToBeat = toBeatTime
 		g.Genre = c.PostForm("genre")
 		g.Platform = c.PostForm("platform")
 		g.Ranking = ranking
@@ -164,10 +159,10 @@ func update(c *gin.Context) {
 	}
 }
 
-func status(c *gin.Context) {
-	status := game.Status(c.Param("status"))
-	platform := game.Platform(c.Param("platform"))
-	page, err := strconv.Atoi(c.Param("page"))
+func pages(c *gin.Context) {
+	status := game.Status(c.Query("status"))
+	platform := game.Platform(c.Query("platform"))
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		page = 1
 	}
@@ -179,4 +174,54 @@ func status(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+}
+
+func start(c *gin.Context) {
+	if sw != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "stopwatch is running",
+		})
+		return
+	}
+
+	id := c.Query("id")
+	title := service.ByID(id).Title
+
+	sw = game.NewStopWatch(id, title)
+	err := sw.Start()
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": "bad request",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "stopwatch started",
+	})
+}
+
+func stop(c *gin.Context) {
+	dur := sw.Stop()
+
+	if dur > 0 {
+		g := service.ByID(sw.GameID)
+		g.PlayedTime += dur
+		service.Update(g)
+	}
+
+	sw = nil
+	c.Redirect(http.StatusSeeOther, "/game")
+}
+
+func stopwatch(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"stopwatch": sw,
+	})
+}
+
+func terminate(c *gin.Context) {
+	sw = nil
+	c.JSON(http.StatusOK, nil)
 }

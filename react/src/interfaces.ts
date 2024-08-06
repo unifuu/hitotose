@@ -19,3 +19,16 @@ export interface StopwatchData {
     end_time: string,
     duration: number,
 }
+
+export interface BadgeData {
+    played: number,
+    playing: number,
+    to_play: number,
+
+    all_platform: number,
+    pc: number,
+    playstation: number,
+    nintendo_switch: number,
+    xbox: number,
+    mobile: number,
+}
