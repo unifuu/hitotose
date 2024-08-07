@@ -41,14 +41,6 @@ func Init(e *gin.Engine) {
 	}
 }
 
-// func updateStatus(c *gin.Context) {
-// 	gameId := c.PostForm("id")
-// 	newStatus := c.PostForm("newStatus")
-// 	targetGame := service.ByID(gameId)
-// 	targetGame.Status = game.Status(newStatus)
-// 	service.Update(targetGame)
-// }
-
 func badges(c *gin.Context) {
 	status := game.Status(c.Query("status"))
 	badges := service.Badge(status)

@@ -41,7 +41,8 @@ def get_title_by_id(id):
     serializer = GameSerializer(game)
     return serializer.data['title']
 
-def start_game(request, id):
+def start_game(request):
+    id = request.GET.get('id')
     app_config = apps.get_app_config('game')
     stopwatch = app_config.stopwatch
 
@@ -104,54 +105,58 @@ def create_game(request):
         serializer.save()
         return redirect('/game/')
 
-def to_update_game(request, id):
-    try:
-        game_id = ObjectId(id)
-    except Exception as e:
-        return Response({"error": "Invalid game ID"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        game = Game.objects.get(pk=game_id)
-    except Game.DoesNotExist:
-        return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-            serializer = GameSerializer(game)
-            return JsonResponse(serializer.data)
-
 @csrf_protect
 def update_game(request):
-    try:
-        game_id = ObjectId(request.POST.get('id'))
-        game = Game.objects.get(pk=game_id)
-        if request.method == 'POST':
-            played_time_hour = int(request.POST.get('played_time_hour'), 0)
-            played_time_min = int(request.POST.get('played_time_min'), 0)
-            time_to_beat_hour = int(request.POST.get('time_to_beat_hour'), 0)
-            time_to_beat_min = int(request.POST.get('time_to_beat_min'), 0)
-            
-            played_time = played_time_hour * 60 + played_time_min
-            time_to_beat = time_to_beat_hour * 60 + time_to_beat_min
+    if request.method == 'GET':
+        id = request.GET.get('id')
+        try:
+            game_id = ObjectId(id)
+        except Exception as e:
+            return Response({"error": "Invalid game ID"}, status=status.HTTP_400_BAD_REQUEST)
 
-            game.played_time = played_time
-            game.time_to_beat = time_to_beat
+        try:
+            game = Game.objects.get(pk=game_id)
+        except Game.DoesNotExist:
+            return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            game.title = request.POST.get('title', game.title)
-            game.genre = request.POST.get('genre', game.genre)
-            game.platform = request.POST.get('platform', game.platform)
-            game.developer = request.POST.get('developer', game.developer)
-            game.publisher = request.POST.get('publisher', game.publisher)
-            game.status = request.POST.get('status', game.status)
-            game.ranking = int(request.POST.get('ranking', game.ranking))
-            game.rating = request.POST.get('rating', game.rating)
+        serializer = GameSerializer(game)
+        return JsonResponse(serializer.data)
+    elif request.method == 'POST':
+        try:
+            game_id = ObjectId(request.POST.get('id'))
+            game = Game.objects.get(pk=game_id)
+            if request.method == 'POST':
+                played_time_hour = int(request.POST.get('played_time_hour'), 0)
+                played_time_min = int(request.POST.get('played_time_min'), 0)
+                time_to_beat_hour = int(request.POST.get('time_to_beat_hour'), 0)
+                time_to_beat_min = int(request.POST.get('time_to_beat_min'), 0)
+                
+                played_time = played_time_hour * 60 + played_time_min
+                time_to_beat = time_to_beat_hour * 60 + time_to_beat_min
 
-            game.save()
+                game.played_time = played_time
+                game.time_to_beat = time_to_beat
+
+                game.title = request.POST.get('title', game.title)
+                game.genre = request.POST.get('genre', game.genre)
+                game.platform = request.POST.get('platform', game.platform)
+                game.developer = request.POST.get('developer', game.developer)
+                game.publisher = request.POST.get('publisher', game.publisher)
+                game.status = request.POST.get('status', game.status)
+                game.ranking = int(request.POST.get('ranking', game.ranking))
+                game.rating = request.POST.get('rating', game.rating)
+
+                game.save()
+                return redirect('/game/')
+        except Exception as e:
+            print("view.update_game: error = ", e)
             return redirect('/game/')
-    except Exception as e:
-        print("view.update_game: error = ", e)
-        return redirect('/game/')
 
-def get_games(request, status, platform, page):
+def get_games(request):
+    status = request.GET.get('status')
+    platform = request.GET.get('platform')
+    page = request.GET.get('p')
+
     if platform == 'All':
         game_list = Game.objects.filter(status=status).order_by('title')
     else:
@@ -187,7 +192,8 @@ def get_games(request, status, platform, page):
     # return JsonResponse(data, safe=False)
     return JsonResponse(data, encoder=CustomJSONEncoder, safe=False)
 
-def badge(request, status):
+def badges(request):
+    status = request.GET.get('status')
     played_count = Game.objects.filter(status='Played').count()
     playing_count = Game.objects.filter(status='Playing').count()
     to_play_count = Game.objects.filter(status='ToPlay').count()
@@ -212,7 +218,8 @@ def badge(request, status):
     })
 
 @api_view(['DELETE'])
-def delete_game(request, id):
+def delete_game(request):
+    id = request.GET.get('id')
     game = get_object_or_404(Game, _id=ObjectId(id))
     game.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)

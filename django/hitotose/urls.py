@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from game.views import GameViewSet, badge, create_game, delete_game, get_csrf, get_games, start_game, stop_game, stopwatch, to_update_game, update_game
+from game.views import GameViewSet, badges, create_game, delete_game, get_csrf, get_games, start_game, stop_game, stopwatch, to_update_game, update_game
 
 router = routers.DefaultRouter()
 router.register(r'games', GameViewSet)
@@ -26,14 +26,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/csrf/', get_csrf, name='get_csrf'),
-    # path('api/game/<str:id>/', get_game_by_id, name='get_game_by_id'),
+    path('api/game/badge', badges, name='badges'),
     path('api/game/create', create_game, name='create_game'),
-    path('api/game/delete/<str:id>', delete_game, name='delete_game'),
-    path('api/game/update/<str:id>/', to_update_game, name='to_update_game'),
-    path('api/game/update/', update_game, name='update_game'),
-    path('api/game/start/<str:id>/', start_game, name='start_game'),
+    path('api/game/delete', delete_game, name='delete_game'),
+    path('api/game/pages', get_games, name='get_games'),
+    path('api/game/start', start_game, name='start_game'),
     path('api/game/stop/', stop_game, name='stop_game'),
-    path('api/game/badge/status/<str:status>', badge, name='badge'),
-    path('api/game/status/<str:status>/platform/<str:platform>/p/<str:page>', get_games, name='get_games'),
     path('api/game/stopwatch', stopwatch, name='stopwatch'),
+    path('api/game/update/', update_game, name='update_game'),
 ]
