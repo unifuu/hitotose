@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-Route::get('admin', [AdminController::class, 'index']);
+use App\Http\Controllers\ApiController;
+use App\Http\Controllers\GameController;
 
 Route::prefix('api')->group(function () {
     Route::get('csrf', [ApiController::class, 'getCsrf'])->name('get_csrf');
