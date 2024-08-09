@@ -1,0 +1,13 @@
+.DS_Store
+
+# extensions
+*.webp
+*.log
+*.exe
+
+# directories
+assets
+build
+
+# files
+**/app.json
