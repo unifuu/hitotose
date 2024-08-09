@@ -25,6 +25,8 @@ const (
 func Init(e *gin.Engine) {
 	service = srv.NewService()
 
+	// TODO Add filters
+
 	api := e.Group("/api/game")
 	{
 		api.GET("/", index)

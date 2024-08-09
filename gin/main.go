@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/unifuu/hitotose/gin/api"
 	"github.com/unifuu/hitotose/gin/db"
@@ -11,6 +12,9 @@ func main() {
 
 	// Create a new Gin router
 	router := gin.Default()
+
+	// CORS
+	router.Use(cors.Default())
 
 	api.Init(router)
 
