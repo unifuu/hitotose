@@ -1,0 +1,43 @@
+{
+    "genres": [
+        { "value": "Action", "label": "Action" },
+        { "value": "Adventure", "label": "Adventure" },
+        { "value": "ARPG", "label": "ARPG" },
+        { "value": "Card", "label": "Card" },
+        { "value": "Fighting", "label": "Fighting" },
+        { "value": "FPS", "label": "FPS" },
+        { "value": "MMORPG", "label": "MMORPG" },
+        { "value": "MOBA", "label": "MOBA" },
+        { "value": "Party", "label": "Party" },
+        { "value": "Racing", "label": "Racing" },
+        { "value": "Rhythm", "label": "Rhythm" },
+        { "value": "RPG", "label": "RPG" },
+        { "value": "RTS", "label": "RTS" },
+        { "value": "Sandbox", "label": "Sandbox" },
+        { "value": "Simulation", "label": "Simulation" },
+        { "value": "Sports", "label": "Sports" },
+        { "value": "Survival", "label": "Survival" },
+        { "value": "TPS", "label": "TPS" },
+        { "value": "Visual Novel", "label": "Visual Novel" },
+        { "value": "Puzzle", "label": "Puzzle" }
+    ],
+    "platforms": [
+        { "value": "PC", "label": "PC" },
+        { "value": "Nintendo Switch", "label": "Nintendo Switch" },
+        { "value": "PlayStation", "label": "PlayStation" },
+        { "value": "Xbox", "label": "Xbox" },
+        { "value": "Mobile", "label": "Mobile" }
+    ],
+    "rating": [
+        { "value": "10", "label": "10: Perfect" },
+        { "value": "9", "label": "9: Excellent" },
+        { "value": "8", "label": "8: Fantastic" },
+        { "value": "7", "label": "7: Great" },
+        { "value": "6", "label": "6: Good" },
+        { "value": "5", "label": "5: Fine" },
+        { "value": "4", "label": "4: Not Satisfied" },
+        { "value": "3", "label": "3: Boring" },
+        { "value": "2", "label": "2: Bad" },
+        { "value": "1", "label": "1: Trash" }
+    ]
+}

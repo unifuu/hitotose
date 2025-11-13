@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  react:
+    build:
+      context: ./react
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - gin
+
+  gin:
+    build:
+      context: ./gin
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo
+    container_name: 'mongodb'
+    hostname: 'mongo'
+    ports:
+      - "27017:27017"
+    restart: always
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
