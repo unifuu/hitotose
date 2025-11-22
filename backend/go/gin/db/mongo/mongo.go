@@ -27,6 +27,6 @@ func Init() {
 		log.Fatal(err)
 	}
 
-	Games = client.Database(DB).Collection("game")
-	Users = client.Database(DB).Collection("user")
+	Games = client.Database(DB).Collection("games")
+	Users = client.Database(DB).Collection("users")
 }

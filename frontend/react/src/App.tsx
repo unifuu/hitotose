@@ -1,8 +1,8 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import Game from './Components/Game/Game';
 import useToken from './useToken';
 import SignIn from './Components/SignIn/SignIn';
+import Blog from './Components/Blog/Blog';
 
 export default function App() {
     const { token, setToken } = useToken()
@@ -11,9 +11,8 @@ export default function App() {
         return (
             <div className="App">
                 <Routes>
-                    <Route path="/" element={<Game authed={false} />} />
+                    <Route path="/" element={<Blog authed={false} />} />
                     <Route path="/fuu" element={<SignIn setToken={setToken} />} />
-                    <Route path="/game" element={<Game authed={false} />} />
                 </Routes>
             </div>
         );
@@ -21,9 +20,7 @@ export default function App() {
         return (
             <div className="App">
                 <Routes>
-                    <Route path="/" element={<Game authed={true} />} />
-                    <Route path="/fuu" element={<SignIn setToken={setToken} />} />
-                    <Route path="/game" element={<Game authed={true} />} />
+                    <Route path="/" element={<Blog authed={true} />} />
                 </Routes>
             </div>
         );

@@ -2,7 +2,6 @@ package mw
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	go_redis "github.com/go-redis/redis/v8"
@@ -39,16 +38,16 @@ func Auth(c *gin.Context) {
 }
 
 // Redirect HTTP to HTTPS
-func HTTPS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		if c.Request.TLS == nil && c.Request.Host != "" {
-			url := "https://" + c.Request.Host + c.Request.RequestURI
-			c.Redirect(http.StatusMovedPermanently, url)
-			c.Abort()
-			return
-		}
+// func HTTPS() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		if c.Request.TLS == nil && c.Request.Host != "" {
+// 			url := "https://" + c.Request.Host + c.Request.RequestURI
+// 			c.Redirect(http.StatusMovedPermanently, url)
+// 			c.Abort()
+// 			return
+// 		}
 
-		// If the request is using HTTPS then c.Next()
-		c.Next()
-	}
-}
+// 		// If the request is using HTTPS then c.Next()
+// 		c.Next()
+// 	}
+// }

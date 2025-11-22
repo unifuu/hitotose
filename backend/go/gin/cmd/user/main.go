@@ -18,7 +18,7 @@ import (
 
 var (
 	MGO_DB  = "hitotose"
-	MGO_COL = "user"
+	MGO_COL = "users"
 
 	cli *mongo.Client
 	col *mongo.Collection

@@ -24,6 +24,14 @@ npm install react-router-dom
 # Install JS-COOKIE
 npm i --save-dev @types/js-cookie
 
+# Markdown
+npm i react-markdown
+npm i remark-gfm
+npm i react-syntax-highlighter
+# npm i --save-dev @types/react-syntax-highlighter
+
+npm i dayjs
+
 npm install -g serve
 ```
 
