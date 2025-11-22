@@ -6,6 +6,7 @@ toolchain go1.24.7
 
 require (
 	github.com/gin-contrib/cors v1.7.6
+	github.com/gin-contrib/static v1.1.5
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/unifuu/monggo v0.0.0-20251110121739-22e7e2109aa1

@@ -15,8 +15,8 @@ var (
 )
 
 func Init() {
-	// opts := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
-	opts := options.Client().ApplyURI("mongodb://mongo:27017")
+	opts := options.Client().ApplyURI("mongodb://127.0.0.1:27017")
+	// opts := options.Client().ApplyURI("mongodb://mongo:27017")
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		log.Fatal(err)
