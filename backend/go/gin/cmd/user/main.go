@@ -7,7 +7,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/unifuu/hitotose/gin/model/user"
+	"github.com/unifuu/hitotose/backend/go/gin/model/user"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

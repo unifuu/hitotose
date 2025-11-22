@@ -2,8 +2,8 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/unifuu/hitotose/gin/api/game"
-	"github.com/unifuu/hitotose/gin/api/user"
+	"github.com/unifuu/hitotose/backend/go/gin/api/game"
+	"github.com/unifuu/hitotose/backend/go/gin/api/user"
 )
 
 func Init(e *gin.Engine) {

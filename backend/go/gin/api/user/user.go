@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/unifuu/hitotose/gin/db/redis"
-	"github.com/unifuu/hitotose/gin/model/user"
+	"github.com/unifuu/hitotose/backend/go/gin/db/redis"
+	"github.com/unifuu/hitotose/backend/go/gin/model/user"
 
 	"github.com/gin-gonic/gin"
-	user_svc "github.com/unifuu/hitotose/gin/svc/user"
+	user_svc "github.com/unifuu/hitotose/backend/go/gin/svc/user"
 )
 
 const (

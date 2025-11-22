@@ -84,8 +84,8 @@ github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.3.0 h1:Qd2W2sQawAfG8XSvzwhBeoGq71zXOC/Q1E9y/wUcsUA=
 github.com/ugorji/go/codec v1.3.0/go.mod h1:pRBVtBSKl77K30Bv8R2P+cLSGaTtex6fsA2Wjqmfxj4=
-github.com/unifuu/monggo v0.0.0-20251006100854-0e7b2c6f50f4 h1:4lI65uhoEfizO0bKCZ6sjLFA7YG0/EXcWmGr58QBobY=
-github.com/unifuu/monggo v0.0.0-20251006100854-0e7b2c6f50f4/go.mod h1:YSfEu1lrwehFLOWmW2/7Q1PlPV+cxenKnXeXonkGeEA=
+github.com/unifuu/monggo v0.0.0-20251110121739-22e7e2109aa1 h1:PdUluv9MMbYQnv/FjPenscMnBSnvg3Mqagj4e+X9F3E=
+github.com/unifuu/monggo v0.0.0-20251110121739-22e7e2109aa1/go.mod h1:YSfEu1lrwehFLOWmW2/7Q1PlPV+cxenKnXeXonkGeEA=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

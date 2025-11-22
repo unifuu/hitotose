@@ -1,4 +1,4 @@
-module github.com/unifuu/hitotose/gin
+module github.com/unifuu/hitotose/backend/go/gin
 
 go 1.24.0
 
@@ -8,7 +8,7 @@ require (
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/unifuu/monggo v0.0.0-20251006100854-0e7b2c6f50f4
+	github.com/unifuu/monggo v0.0.0-20251110121739-22e7e2109aa1
 	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/crypto v0.42.0
 )
