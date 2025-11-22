@@ -1,34 +1,40 @@
-version: '3'
+version: '3.8'
 
 services:
   react:
-    container_name: 'react'
+    container_name: react
     build:
       context: ./frontend/react
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "80:80"
     depends_on:
       - gin
 
   gin:
-    container_name: 'gin'
+    container_name: gin
     build:
       context: ./backend/go/gin
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
-      - mongo
-      - redis
+      redis:
+        condition: service_started
+    environment:
+      - MONGO_URI=mongodb://mongo:27017
+      - REDIS_ADDR=redis:6379
 
   mongo:
     image: mongo
-    container_name: 'mongo'
-    hostname: 'mongo'
+    container_name: mongo
+    hostname: mongo
     ports:
       - "27017:27017"
     restart: always
+    healthcheck:
+      disable: true
+
 
   redis:
     image: redis
