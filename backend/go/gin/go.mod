@@ -9,6 +9,8 @@ require (
 	github.com/gin-contrib/static v1.1.5
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/unifuu/monggo v0.0.0-20251110121739-22e7e2109aa1
 	go.mongodb.org/mongo-driver v1.17.4
 	golang.org/x/crypto v0.42.0
